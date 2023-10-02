@@ -2,11 +2,13 @@ name: Astronomer CI - Deploy code (Multiple Branches)
 
 on:
   push:
-    branches: [dev]
+    branches:
+      - dev
   pull_request:
     types:
       - closed
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   deployment-type:
@@ -15,9 +17,7 @@ jobs:
       DAGS_ONLY: ${{ steps.deployment-type.outputs.DAGS_ONLY }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
+        uses: actions/checkout@v2  # Updated to version 2
 
       - name: Get Deployment Type
         id: deployment-type
@@ -33,19 +33,19 @@ jobs:
             fi
           done
 
-          echo "DAGS_ONLY=$dags_only" >> $GITHUB_OUTPUT
+          echo "DAGS_ONLY=$dags_only" >> $GITHUB_ENV  # Updated to $GITHUB_ENV
 
   dev-push:
     if: github.ref == 'refs/heads/dev'
     env:
       ## Sets DEV Deployment API key credentials as environment variables
-      ASTRONOMER_ KEY_ID: ${{ secrets.DEV_ASTRONOMER_KEY_ID }}
+      ASTRONOMER_KEY_ID: ${{ secrets.DEV_ASTRONOMER_KEY_ID }}
       ASTRONOMER_KEY_SECRET: ${{ secrets.DEV_ASTRONOMER_KEY_SECRET }}
     runs-on: ubuntu-latest
     needs: deployment-type
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2  # Updated to version 2
 
       # If only DAGs changed, do a DAG Deploy
       - name: DAG Deploy to Astro
@@ -72,7 +72,7 @@ jobs:
     needs: deployment-type
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2  # Updated to version 2
 
       # If only DAGs changed, do a DAG Deploy
       - name: DAG Deploy to Astro
