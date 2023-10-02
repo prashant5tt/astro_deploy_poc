@@ -1,10 +1,7 @@
 from datetime import datetime
 from airflow import DAG
+#from airflow.operators.bash_operator import BashOperator
 from airflow.operators.bash import BashOperator
-#from airflow.operators.dummy import DummyOperator
-#from airflow.utils.dates import days_ago
-#from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
-
 
 # Define default arguments for the DAG
 default_args = {
@@ -25,7 +22,7 @@ dag = DAG(
 # Define the source directory and Google Cloud Storage bucket names
 source_directory = 'D:\local_to_gcs_files'
 destination_bucket = 'gcp_bigquery_gcs_census_sync_demo'
-gcs_path = '/src_files'
+gcs_path = 'src_files'
 
 # Define a BashOperator to copy files from local to GCS
 local_to_gcs_task = BashOperator(
@@ -34,7 +31,7 @@ local_to_gcs_task = BashOperator(
     dag=dag,
 )
 
-# Set task dependencies
+# Set task dependencies if needed
 # local_to_gcs_task >> ...
 
 if __name__ == "__main__":
