@@ -1,5 +1,4 @@
 name: Astronomer CI - Deploy code (Multiple Branches)
-
 on:
   push:
     branches: [dev]
@@ -19,6 +18,7 @@ jobs:
         with:
           fetch-depth: 2
 
+     # Determine if only DAG's have changes    
       - name: Get Deployment Type
         id: deployment-type
         run: |
@@ -41,6 +41,8 @@ jobs:
       ## Sets DEV Deployment API key credentials as environment variables
       ASTRONOMER_ KEY_ID: ${{ secrets.DEV_ASTRONOMER_KEY_ID }}
       ASTRONOMER_KEY_SECRET: ${{ secrets.DEV_ASTRONOMER_KEY_SECRET }}
+
+
     runs-on: ubuntu-latest
     needs: deployment-type
     steps:
@@ -51,7 +53,7 @@ jobs:
       - name: DAG Deploy to Astro
         if: needs.deployment-type.outputs.DAGS_ONLY == 1
         run: |
-          curl -sSL https://install.astronomer.io | sudo bash -s - v1.18.2
+          curl -sSL https://install.astronomer.io | sudo bash -s -- v1.18.2
           astro deployment update --dag-deploy enable --force
           astro deploy --dags
 
@@ -59,7 +61,7 @@ jobs:
       - name: Image and DAG Deploy to Astro
         if: needs.deployment-type.outputs.DAGS_ONLY == 0
         run: |
-          curl -sSL https://install.astronomer.io | sudo bash -s - v1.18.2
+          curl -sSL https://install.astronomer.io | sudo bash -s -- v1.18.2
           astro deploy
 
   prod-push:
